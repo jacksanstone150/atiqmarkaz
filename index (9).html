@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AL-NOOR BOOKS — Islamic Books Store</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f5f5f0; }
+
+    /* TOP BAR */
+    .top-bar {
+      background: #0d3d20;
+      padding: 8px 16px;
+      font-size: 12px;
+      text-align: center;
+      color: #a5d6a7;
+    }
+
+    /* HEADER */
+    .header { background: linear-gradient(135deg, #1a5c38, #2e7d32); color: white; }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+    }
+    .logo { font-size: 22px; font-weight: 600; color: white; }
+    .logo span { font-size: 12px; display: block; color: #a5d6a7; font-weight: 400; }
+    .cart-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cart-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* CATEGORIES */
+    .categories {
+      display: flex;
+      gap: 8px;
+      padding: 10px 20px;
+      overflow-x: auto;
+      background: #1b5e20;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .cat-btn.active, .cat-btn:hover { background: white; color: #1b5e20; }
+
+    /* HERO */
+    .hero { padding: 24px 20px 18px; text-align: center; }
+    .hero h2 { font-size: 21px; color: white; font-weight: 600; }
+    .hero p { font-size: 13px; color: #c8e6c9; margin-top: 5px; }
+
+    /* BOOKS SECTION */
+    .section { padding: 18px 16px; }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1b5e20;
+      margin-bottom: 14px;
+    }
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    /* BOOK CARD */
+    .book-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .book-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .book-img {
+      width: 100%;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+    }
+    .book-info { padding: 10px; }
+    .book-name { font-size: 13px; font-weight: 600; color: #222; margin-bottom: 3px; line-height: 1.4; }
+    .book-cat { font-size: 11px; color: #888; margin-bottom: 6px; }
+    .book-price { font-size: 15px; font-weight: 700; color: #2e7d32; }
+    .add-btn {
+      width: 100%;
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 7px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: #1b5e20; }
+
+    /* BANNER */
+    .banner {
+      background: linear-gradient(135deg, #1a5c38, #2e7d32);
+      color: white;
+      padding: 18px;
+      border-radius: 12px;
+      margin: 0 16px 16px;
+      text-align: center;
+    }
+    .banner h3 { font-size: 16px; font-weight: 600; }
+    .banner p { font-size: 12px; color: #c8e6c9; margin-top: 5px; }
+
+    /* FOOTER */
+    .footer {
+      background: #0d3d20;
+      color: #a5d6a7;
+      padding: 24px 20px;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .footer .footer-logo { font-size: 18px; font-weight: 700; color: white; margin-bottom: 12px; }
+    .footer a {
+      color: #c8e6c9;
+      display: inline-block;
+      margin: 5px 0;
+      text-decoration: none;
+    }
+    .footer a:hover { color: white; }
+    .footer-copy { margin-top: 14px; font-size: 11px; color: #5a8a6a; }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white;
+      border-radius: 20px 20px 0 0;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 480px;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-close {
+      float: right;
+      font-size: 22px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+      line-height: 1;
+    }
+    .modal-img { font-size: 64px; text-align: center; margin: 10px 0 14px; }
+    .modal-title { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+    .modal-desc { font-size: 13px; color: #666; margin: 8px 0 10px; line-height: 1.6; }
+    .modal-price { font-size: 24px; font-weight: 700; color: #2e7d32; margin-bottom: 14px; }
+    .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .qty-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1.5px solid #ccc;
+      background: #f5f5f5;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .qty-btn:hover { background: #e0e0e0; }
+    .qty-num { font-size: 18px; font-weight: 600; min-width: 24px; text-align: center; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-cart {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-cart:hover { background: #1b5e20; }
+    .btn-wa {
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-wa:hover { background: #1ebe5d; }
+
+    /* CART MODAL */
+    .cart-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 300;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .cart-modal-overlay.open { display: flex; }
+    .cart-modal-box {
+      background: white;
+      border-radius: 20px 20px 0 0;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    .cart-modal-title { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+    .cart-item-name { font-weight: 600; color: #222; }
+    .cart-item-price { color: #2e7d32; font-weight: 600; }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 0 10px;
+      color: #1a1a1a;
+    }
+    .cart-empty { text-align: center; color: #999; padding: 30px 0; font-size: 14px; }
+    .btn-wa-full {
+      width: 100%;
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .btn-clear {
+      width: 100%;
+      background: #f5f5f5;
+      color: #888;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 480px) {
+      .books-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 720px) {
+      .books-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  🚚 Free Delivery All Over Pakistan &nbsp;|&nbsp; 💬 WhatsApp: 0318-4799254
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="nav">
+    <div class="logo">📚 AL-NOOR BOOKS<span>Islamic Books Store</span></div>
+    <button class="cart-btn" onclick="openCartModal()">🛒 Cart <span id="cart-count">0</span></button>
+  </div>
+  <div class="hero">
+    <h2>Islamic Books Collection</h2>
+    <p>Qurani Kutub | Hadees | Dini Literature</p>
+  </div>
+  <div class="categories">
+    <button class="cat-btn active" onclick="filterBooks('all', this)">Sab Books</button>
+    <button class="cat-btn" onclick="filterBooks('quran', this)">📖 Quran</button>
+    <button class="cat-btn" onclick="filterBooks('hadees', this)">📜 Hadees</button>
+    <button class="cat-btn" onclick="filterBooks('dua', this)">🤲 Dua</button>
+    <button class="cat-btn" onclick="filterBooks('seerat', this)">⭐ Seerat</button>
+    <button class="cat-btn" onclick="filterBooks('fiqh', this)">🕌 Fiqh</button>
+  </div>
+</div>
+
+<!-- BOOKS SECTION -->
+<div class="section">
+  <div class="section-title">📚 Bestseller Islamic Books</div>
+  <div class="books-grid" id="books-grid"></div>
+</div>
+
+<!-- BANNER -->
+<div class="banner">
+  <h3>🎁 Special Offer!</h3>
+  <p>2 ya zyada books khareedne par 10% discount milega</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-logo">📚 AL-NOOR BOOKS</div>
+  <a href="https://wa.me/923184799254">💬 WhatsApp: 0318-4799254</a>
+  <div class="footer-copy">© 2025 Al-Noor Books — All Rights Reserved</div>
+</div>
+
+<!-- BOOK DETAIL MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img" id="m-img"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-desc" id="m-desc"></div>
+    <div class="modal-price" id="m-price"></div>
+    <div class="qty-row">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <span class="qty-num" id="qty-display">1</span>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cart" onclick="addToCart()">🛒 Cart Mein Dalein</button>
+      <button class="btn-wa" onclick="orderWA()">💬 WhatsApp Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="cart-modal-overlay" id="cart-modal">
+  <div class="cart-modal-box">
+    <button class="modal-close" onclick="closeCartModal()">✕</button>
+    <div class="cart-modal-title">🛒 Aapki Cart</div>
+    <div id="cart-items"></div>
+    <button class="btn-wa-full" id="wa-order-btn" onclick="cartWhatsApp()" style="display:none;">
+      💬 WhatsApp pe Order Karein
+    </button>
+    <button class="btn-clear" id="clear-btn" onclick="clearCart()" style="display:none;">
+      🗑️ Cart Saaf Karein
+    </button>
+  </div>
+</div>
+
+<script>
+  const WA = "923184799254";
+
+  const books = [
+    { id:1,  name:"Quran Majeed (Urdu Tarjuma)", cat:"quran",  emoji:"📖", bg:"#e8f5e9", price:1500, desc:"Mukammal Quran Majeed khubsoorat Urdu tarjume ke saath. Makhsoos leather cover ke saath." },
+    { id:2,  name:"Sahih Bukhari (6 Jild)",       cat:"hadees", emoji:"📜", bg:"#fff8e1", price:2000, desc:"Imam Bukhari ki mashhoor hadees ki kitab. 6 jild ka mukammal set Urdu tarjume ke saath." },
+    { id:3,  name:"Taleem ul Quran",               cat:"quran",  emoji:"🕌", bg:"#e3f2fd", price:1200, desc:"Quran sikhne ke liye behtareen kitab. Asaan Urdu mein tajweed aur qirat ki taaleem." },
+    { id:4,  name:"Riyaz us Saliheen",             cat:"hadees", emoji:"📗", bg:"#f1f8e9", price:1800, desc:"Imam Nawawi ki mashhoor kitab. Sahih ahadees ka khubsoorat majmooa Urdu tarjume ke saath." },
+    { id:5,  name:"Manzil (Dua ki Kitab)",         cat:"dua",    emoji:"🤲", bg:"#fce4ec", price:1000, desc:"Nazar, jadoo aur buri aafat se hifazat ke liye Qurani duaon ka khubsoorat majmooa." },
+    { id:6,  name:"Seerat un Nabi ﷺ",             cat:"seerat", emoji:"⭐", bg:"#fff3e0", price:1500, desc:"Hazrat Muhammad ﷺ ki mubarak zindagi ka mukammal tazkirah. Ibne Hisham ke hawale se." },
+    { id:7,  name:"Fatawa Alamgiri (4 Jild)",      cat:"fiqh",   emoji:"📚", bg:"#e8eaf6", price:2000, desc:"Fiqh Hanafi ka ahem encyclopedia. Mukammal 4 jild ke saath Urdu tarjuma." },
+    { id:8,  name:"Hisnul Muslim",                 cat:"dua",    emoji:"📕", bg:"#fce4ec", price:1000, desc:"Rozana ki masnoon duaon ki mukammal kitab. Pocket size mein available." },
+    { id:9,  name:"Fazail e Amaal",                cat:"hadees", emoji:"📘", bg:"#e0f7fa", price:1200, desc:"Tableegh Jamaat ki mashoor kitab. Namaz, Quran aur hajj ki fazilat ke baare mein." },
+    { id:10, name:"Tafheem ul Quran (9 Jild)",     cat:"quran",  emoji:"📙", bg:"#fff8e1", price:1800, desc:"Maulana Maududi ki mashhoor tafseer. 9 jildon mein Quran ka gehra ilmi mutalia." },
+    { id:11, name:"Bahishti Zewar",                cat:"fiqh",   emoji:"🌿", bg:"#e8f5e9", price:1100, desc:"Aurat aur mard donon ke liye zaroori masaail ki behtareen kitab. Maulana Ashraf Ali Thanvi." },
+    { id:12, name:"Shamaa il Tirmizi",             cat:"seerat", emoji:"✨", bg:"#fff3e0", price:1300, desc:"Huzoor ﷺ ki sifaat, aadat aur akhlaq ka tazkirah. Imam Tirmizi ki mashhoor kitab." }
+  ];
+
+  let cart = [];
+  let currentBook = null;
+  let qty = 1;
+
+  function getCatName(cat) {
+    return { quran:'Qurani Kutub', hadees:'Hadees', dua:'Dua ki Kitab', seerat:'Seerat', fiqh:'Fiqh' }[cat] || cat;
+  }
+
+  function renderBooks(filter = 'all') {
+    const grid = document.getElementById('books-grid');
+    const list = filter === 'all' ? books : books.filter(b => b.cat === filter);
+    grid.innerHTML = list.map(b => `
+      <div class="book-card" onclick="openBook(${b.id})">
+        <div class="book-img" style="background:${b.bg}">${b.emoji}</div>
+        <div class="book-info">
+          <div class="book-name">${b.name}</div>
+          <div class="book-cat">${getCatName(b.cat)}</div>
+          <div class="book-price">Rs. ${b.price.toLocaleString()}</div>
+          <button class="add-btn" onclick="event.stopPropagation(); quickAdd(${b.id})">+ Cart Mein Dalein</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterBooks(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderBooks(cat);
+  }
+
+  function openBook(id) {
+    currentBook = books.find(b => b.id === id);
+    qty = 1;
+    document.getElementById('m-img').textContent = currentBook.emoji;
+    document.getElementById('m-title').textContent = currentBook.name;
+    document.getElementById('m-desc').textContent = currentBook.desc;
+    document.getElementById('m-price').textContent = 'Rs. ' + currentBook.price.toLocaleString();
+    document.getElementById('qty-display').textContent = 1;
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+  function changeQty(d) {
+    qty = Math.max(1, qty + d);
+    document.getElementById('qty-display').textContent = qty;
+  }
+
+  function addToCart() {
+    if (!currentBook) return;
+    const ex = cart.find(c => c.id === currentBook.id);
+    if (ex) ex.qty += qty; else cart.push({ ...currentBook, qty });
+    updateCartCount();
+    closeModal();
+    alert('✅ ' + currentBook.name + ' cart mein add ho gaya!');
+  }
+
+  function quickAdd(id) {
+    const book = books.find(b => b.id === id);
+    const ex = cart.find(c => c.id === id);
+    if (ex) ex.qty++; else cart.push({ ...book, qty: 1 });
+    updateCartCount();
+    alert('✅ ' + book.name + ' cart mein add ho gaya!');
+  }
+
+  function updateCartCount() {
+    document.getElementById('cart-count').textContent = cart.reduce((s, c) => s + c.qty, 0);
+  }
+
+  function openCartModal() {
+    const container = document.getElementById('cart-items');
+    const waBtn = document.getElementById('wa-order-btn');
+    const clrBtn = document.getElementById('clear-btn');
+
+    if (cart.length === 0) {
+      container.innerHTML = '<div class="cart-empty">🛒 Aapki cart khali hai!</div>';
+      waBtn.style.display = 'none';
+      clrBtn.style.display = 'none';
+    } else {
+      const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+      container.innerHTML = cart.map(c => `
+        <div class="cart-item">
+          <div>
+            <div class="cart-item-name">${c.emoji} ${c.name}</div>
+            <div style="font-size:12px;color:#999;">Qty: ${c.qty}</div>
+          </div>
+          <div class="cart-item-price">Rs. ${(c.price * c.qty).toLocaleString()}</div>
+        </div>
+      `).join('') + `
+        <div class="cart-total"><span>Total:</span><span>Rs. ${total.toLocaleString()}</span></div>
+      `;
+      waBtn.style.display = 'block';
+      clrBtn.style.display = 'block';
+    }
+    document.getElementById('cart-modal').classList.add('open');
+  }
+
+  function closeCartModal() { document.getElementById('cart-modal').classList.remove('open'); }
+
+  function clearCart() {
+    cart = [];
+    updateCartCount();
+    closeCartModal();
+  }
+
+  function cartWhatsApp() {
+    const items = cart.map(c => `• ${c.name} x${c.qty} = Rs. ${(c.price * c.qty).toLocaleString()}`).join('\n');
+    const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    const msg = `Assalam o Alaikum! Al-Noor Books se order karna hai:\n\n${items}\n\nTotal: Rs. ${total.toLocaleString()}\n\nPlease confirm karein.`;
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg));
+  }
+
+  function orderWA() {
+    if (!currentBook) return;
+    const msg = `Assalam o Alaikum! Al-Noor Books se order karna hai:\n\n📚 ${currentBook.name}\nQty: ${qty}\nPrice: Rs. ${(currentBook.price * qty).toLocaleString()}\n\nPlease confirm karein.`;
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg));
+  }
+
+  // Close modals on overlay click
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.getElementById('cart-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeCartModal();
+  });
+
+  renderBooks();
+</script>
+</body>
+</html>
